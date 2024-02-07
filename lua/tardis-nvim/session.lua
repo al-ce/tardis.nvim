@@ -74,17 +74,13 @@ function M.Session:create_info_buffer(revision)
     vim.api.nvim_set_option_value('readonly', true, { buf = fd })
     vim.keymap.set('n', 'q', function() vim.api.nvim_buf_delete(fd, { force = true }) end, { buffer = fd })
 
-    local current_ui = vim.api.nvim_list_uis()[1]
-    if not current_ui then
-        error("no ui found")
-    end
     vim.api.nvim_open_win(fd, false, {
         relative = 'win',
         anchor = 'NE',
-        width = 100,
+        width = 82,
         height = #message,
         row = 0,
-        col = current_ui.width,
+        col = vim.api.nvim_win_get_width(0)
     })
 end
 
