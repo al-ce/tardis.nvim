@@ -130,6 +130,9 @@ function M.Session:init(id, parent, adapter_type)
 end
 
 function M.Session:close()
+
+    vim.api.nvim_win_set_buf(0, self.origin)
+
     for _, buf in ipairs(self.buffers) do
         buf:close()
     end
