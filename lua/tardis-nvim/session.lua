@@ -32,8 +32,8 @@ function M.Session:create_buffer(revision)
     local file_at_revision = self.adapter.get_file_at_revision(revision, self)
 
     vim.api.nvim_buf_set_lines(fd, 0, -1, false, file_at_revision)
-    vim.api.nvim_buf_set_option(fd, 'filetype', self.filetype)
-    vim.api.nvim_buf_set_option(fd, 'readonly', true)
+    vim.api.nvim_set_option_value('filetype', self.filetype, { buf = fd })
+    vim.api.nvim_set_option_value('readonly', true, { buf = fd })
 
     local keymap = self.parent.config.keymap
     vim.keymap.set('n', keymap.next, function() self:next_buffer() end, { buffer = fd })
@@ -52,9 +52,8 @@ function M.Session:create_info_buffer(revision)
     end
     local fd = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_lines(fd, 0, -1, false, message)
-    -- TODO: use appropriate filetype
-    vim.api.nvim_buf_set_option(fd, 'filetype', 'gitrevision')
-    vim.api.nvim_buf_set_option(fd, 'readonly', true)
+    vim.api.nvim_set_option_value('filetype', 'gitrevision', { buf = fd })
+    vim.api.nvim_set_option_value('readonly', true, { buf = fd })
 
     local current_ui = vim.api.nvim_list_uis()[1]
     if not current_ui then
@@ -78,7 +77,7 @@ function M.Session:init(id, parent, adapter_type)
     if not adapter then return end
 
     self.adapter = adapter
-    self.filetype = vim.api.nvim_buf_get_option(0, 'filetype')
+    self.filetype = vim.api.nvim_get_option_value('filetype', { buf = 0 })
     self.origin = vim.api.nvim_get_current_buf()
     self.id = id
     self.parent = parent
