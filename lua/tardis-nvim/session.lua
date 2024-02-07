@@ -54,8 +54,9 @@ function M.Session:create_info_buffer(revision)
     end
     local fd = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_lines(fd, 0, -1, false, message)
-    vim.api.nvim_set_option_value('filetype', 'gitrevision', { buf = fd })
+    vim.api.nvim_set_option_value('filetype', 'git', { buf = fd })
     vim.api.nvim_set_option_value('readonly', true, { buf = fd })
+    vim.keymap.set('n', 'q', function() vim.api.nvim_buf_delete(fd, { force = true }) end, { buffer = fd })
 
     local current_ui = vim.api.nvim_list_uis()[1]
     if not current_ui then
