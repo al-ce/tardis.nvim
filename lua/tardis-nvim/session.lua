@@ -30,7 +30,9 @@ end
 function M.Session:create_buffer(revision)
     local fd = vim.api.nvim_create_buf(false, true)
     local file_at_revision = self.adapter.get_file_at_revision(revision, self)
+    local filename = self.path .. ' @ ' .. revision .. ' TARDIS'
 
+    vim.api.nvim_buf_set_name(fd, filename)
     vim.api.nvim_buf_set_lines(fd, 0, -1, false, file_at_revision)
     vim.api.nvim_set_option_value('filetype', self.filetype, { buf = fd })
     vim.api.nvim_set_option_value('readonly', true, { buf = fd })
