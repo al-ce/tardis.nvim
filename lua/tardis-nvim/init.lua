@@ -16,8 +16,9 @@ function Tardis.setup(user_config)
     vim.api.nvim_create_user_command('Tardis', Tardis.tardis, {})
 end
 
-function Tardis.tardis()
-    Tardis.session_manager:create_session()
+---@param opts table?
+function Tardis.tardis(opts)
+    Tardis.session_manager:create_session(opts or {})
 end
 
 return Tardis

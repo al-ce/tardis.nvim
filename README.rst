@@ -33,8 +33,8 @@ The default options are
         },
         initial_revisions = 10,         -- initial revisions to create buffers for
         max_revisions = 256,            -- max number of revisions to load
-        -- Set to "" to show diff against previous revision while scrolling
-        -- Set to e.g. "HEAD" to keep diffing against that revision
+        -- Set to "" to show diff against previously viewed revision
+        -- Set to e.g. "HEAD" to always diff against that revision
         diff_base = nil,
     }
 
@@ -49,6 +49,15 @@ Using tardis is pretty simple
 
 This puts you into a new buffer where you can use the keymaps, like
 described above, to navigate the revisions of the currently open file
+
+Override your configuration's diff base with the `diff_base` option in a
+`tardis.tardis` call.
+
+.. code:: lua
+   require('tardis-nvim').tardis {
+       diff_base = "HEAD~2"  -- e.g. would override `""` in the setup
+   }
+
 
 Known issues
 ============

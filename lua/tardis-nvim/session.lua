@@ -139,7 +139,7 @@ function M.Session:init(id, parent, adapter_type)
 end
 
 function M.Session:show_diff()
-    local diff_base = self.parent.config.settings.diff_base
+    local diff_base = self.parent.cmd_opts.diff_base or self.parent.config.settings.diff_base
     if not diff_base then
         return
     end

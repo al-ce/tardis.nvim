@@ -5,6 +5,7 @@ local M = {}
 ---@field sessions TardisSession[]
 ---@field config TardisConfig
 ---@field next integer
+---@field cmd_opts table
 M.SessionManager = {}
 
 ---@param config TardisConfig
@@ -23,7 +24,9 @@ function M.SessionManager:new(config)
     return session_manager
 end
 
-function M.SessionManager:create_session()
+---@param opts table
+function M.SessionManager:create_session(opts)
+    self.cmd_opts = opts or {}
     local session = ses.Session:new(self.next, self)
     self.next = self.next + 1
     session:goto_buffer(1)
