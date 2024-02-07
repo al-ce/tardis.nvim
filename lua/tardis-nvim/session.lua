@@ -7,7 +7,6 @@ local M = {}
 ---@field id integer
 ---@field parent TardisSessionManager
 ---@field augroup integer
----@field filename string
 ---@field filetype string
 ---@field path string
 ---@field origin integer
@@ -31,7 +30,7 @@ end
 function M.Session:create_buffer(revision)
     local fd = vim.api.nvim_create_buf(false, true)
     local file_at_revision = self.adapter.get_file_at_revision(revision, self)
-    local filename = self.path .. ' @ ' .. revision .. ' TARDIS'
+    local filename = self.path .. ' @ ' .. revision .. ' - TARDIS'
 
     vim.api.nvim_buf_set_name(fd, filename)
     vim.api.nvim_buf_set_lines(fd, 0, -1, false, file_at_revision)
@@ -47,12 +46,16 @@ function M.Session:create_buffer(revision)
     return fd
 end
 
-function M.Session:has_infobuf()
+function M.Session:has_info_buf()
     return self.infobuf and vim.api.nvim_buf_is_valid(self.infobuf)
 end
 
+function M.Session:has_diff_buf()
+    return self.diff_buf and vim.api.nvim_buf_is_valid(self.diff_buf)
+end
+
 function M.Session:toggle_info_buffer()
-    if self:has_infobuf() then
+    if self:has_info_buf() then
         vim.api.nvim_buf_delete(self.infobuf, { force = true })
         self.infobuf = nil
     else
@@ -85,7 +88,7 @@ function M.Session:create_info_buffer(revision)
 end
 
 function M.Session:update_info_buffer()
-    if self:has_infobuf() then
+    if self:has_info_buf() then
         self:toggle_info_buffer()
         local buf = self:get_current_buffer()
         local curr_revision = buf.revision
@@ -104,6 +107,10 @@ function M.Session:init(id, parent, adapter_type)
     self.adapter = adapter
     self.filetype = vim.api.nvim_get_option_value('filetype', { buf = 0 })
     self.origin = vim.api.nvim_get_current_buf()
+    self.origin_pos = vim.api.nvim_win_get_cursor(0)
+    self.origin_win = vim.api.nvim_get_current_win()
+    self.diff_base = nil
+    self.diff_buf = nil
     self.id = id
     self.parent = parent
     self.path = vim.fn.expand('%:p')
@@ -115,34 +122,74 @@ function M.Session:init(id, parent, adapter_type)
         return
     end
 
+    self:show_diff()
+
     for i, revision in ipairs(log) do
         local fd = nil
         if i < parent.config.settings.initial_revisions then
             fd = self:create_buffer(revision)
         end
-        table.insert(self.buffers, buffer.Buffer:new(revision, fd))
+        table.insert(self.buffers, buffer.Buffer:new(self, revision, fd))
     end
     parent:on_session_opened(self)
 end
 
+function M.Session:show_diff()
+    local diff_base = self.parent.config.settings.diff_base
+    if not diff_base then
+        return
+    end
+    if diff_base ~= "" then
+        diff_base = self.adapter.get_rev_parse(diff_base)
+    end
+    self.diff_base = diff_base
+    self.diff_buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_win_set_buf(0, self.diff_buf)
+    self:set_diff_lines(self.diff_base)
+    vim.api.nvim_set_option_value('filetype', self.filetype, { buf = self.diff_buf })
+    vim.api.nvim_set_option_value('readonly', true, { buf = self.diff_buf })
+    vim.cmd('vertical diffsplit')
+end
+
+function M.Session:set_diff_lines(revision)
+    local lines = self.adapter.get_file_at_revision(revision, self)
+    local diff_name = vim.fn.expand(self.path) .. ' @ ' .. revision .. ' - TARDIS diff base'
+    vim.api.nvim_buf_set_name(self.diff_buf, diff_name)
+    vim.api.nvim_buf_set_lines(self.diff_buf, 0, -1, false, lines)
+end
+
+function M.Session:close_pre()
+    if not self.parent.config.settings.diff_base then
+        vim.cmd('diffoff')
+    else
+        vim.cmd('windo diffoff')
+        vim.api.nvim_set_current_win(self.origin_win)
+        vim.cmd('e ' .. self.path)
+        vim.api.nvim_win_set_cursor(0, self.origin_pos)
+        vim.api.nvim_buf_delete(self.diff_buf, { force = true })
+    end
+end
+
+function M.Session:close_post()
+    if self:has_info_buf() then
+        vim.api.nvim_buf_delete(self.infobuf, { force = true })
+    end
+end
+
 function M.Session:close()
-
-    vim.api.nvim_win_set_buf(0, self.origin)
-
+    self:close_pre()
     for _, buf in ipairs(self.buffers) do
         buf:close()
     end
     if self.parent then
         self.parent:on_session_closed(self)
     end
-    if self:has_infobuf() then
-        vim.api.nvim_buf_delete(self.infobuf, { force = true })
-    end
+    self:close_post()
 end
 
 ---@return TardisBuffer
 function M.Session:get_current_buffer()
-    return self.buffers[self.curret_buffer_index]
+    return self.buffers[self.current_buffer_index]
 end
 
 ---@param index integer
@@ -152,17 +199,25 @@ function M.Session:goto_buffer(index)
     if not buf.fd then
         buf.fd = self:create_buffer(buf.revision)
     end
-    buf:focus()
-    self.curret_buffer_index = index
+    buf:focus(self)
+    self.current_buffer_index = index
     self:update_info_buffer()
 end
 
+function M.Session:update_diff_lines()
+    if self:has_diff_buf() and self.diff_base == "" then
+        self:set_diff_lines(self:get_current_buffer().revision)
+    end
+end
+
 function M.Session:next_buffer()
-    self:goto_buffer(self.curret_buffer_index + 1)
+    self:update_diff_lines()
+    self:goto_buffer(self.current_buffer_index + 1)
 end
 
 function M.Session:prev_buffer()
-    self:goto_buffer(self.curret_buffer_index - 1)
+    self:update_diff_lines()
+    self:goto_buffer(self.current_buffer_index - 1)
 end
 
 return M

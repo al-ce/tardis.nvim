@@ -3,6 +3,7 @@ local M = {}
 ---@class TardisAdapter
 ---@field get_revisions_for_current_file fun(parent: TardisSession?): string[]
 ---@field get_file_at_revision fun(revision: string, parent: TardisSession?): string[]
+---@field get_rev_parse fun(relcommit: string): string
 --- Optional fields
 ---@field get_revision_info? fun(revision: string, parent: TardisSession?): string[]
 ---@field get_revision_under_cursor? fun(parent: TardisSession?): string

@@ -62,4 +62,9 @@ function M.get_revision_info(revision, parent)
     return git(root, 'show', '--compact-summary', revision)
 end
 
+---@param relcommit string
+function M.get_rev_parse(relcommit)
+    return git('.', 'rev-parse', '--short', relcommit)[1]
+end
+
 return M

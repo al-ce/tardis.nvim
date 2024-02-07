@@ -5,6 +5,7 @@ local M = {}
 ---@class TardisSettings
 ---@field max_revisions integer
 ---@field initial_revisions integer
+---@field diff_base string
 
 ---@class TardisConfig
 ---@field keymap TardisKeymap
@@ -26,6 +27,7 @@ local function get_default_config()
         settings = {
             max_revisions = 256,
             initial_revisions = 10,
+            diff_base = nil,
         },
         debug = false,
     }

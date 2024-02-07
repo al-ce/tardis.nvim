@@ -33,6 +33,9 @@ The default options are
         },
         initial_revisions = 10,         -- initial revisions to create buffers for
         max_revisions = 256,            -- max number of revisions to load
+        -- Set to "" to show diff against previous revision while scrolling
+        -- Set to e.g. "HEAD" to keep diffing against that revision
+        diff_base = nil,
     }
 
 Usage
