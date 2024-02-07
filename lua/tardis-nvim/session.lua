@@ -10,6 +10,10 @@ local M = {}
 ---@field filetype string
 ---@field path string
 ---@field origin integer
+---@field origin_pos integer[]
+---@field origin_win integer
+---@field diff_base string
+---@field diff_buf integer
 ---@field buffers TardisBuffer[]
 ---@field adapter TardisAdapter
 ---@field infobuf integer
