@@ -163,14 +163,14 @@ function M.Session:set_diff_lines(revision)
 end
 
 function M.Session:close_pre()
-    if not self.parent.config.settings.diff_base then
-        vim.cmd('diffoff')
-    else
+    if self.diff_base then
         vim.cmd('windo diffoff')
         vim.api.nvim_set_current_win(self.origin_win)
         vim.cmd('e ' .. self.path)
         vim.api.nvim_win_set_cursor(0, self.origin_pos)
         vim.api.nvim_buf_delete(self.diff_buf, { force = true })
+    else
+        vim.cmd('diffoff')
     end
 end
 
