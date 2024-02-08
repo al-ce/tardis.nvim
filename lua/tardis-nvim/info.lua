@@ -43,13 +43,16 @@ function M.Info:create_info_buffer(revision)
         vim.api.nvim_buf_delete(fd, { force = true })
     end, { buffer = fd })
 
+    local opts = self.session.parent.config.settings.info
+    local row = opts.position:match('N') and 0 or vim.api.nvim_win_get_height(0)
+    local col = opts.position:match('W') and 0 or vim.api.nvim_win_get_width(0)
     vim.api.nvim_open_win(fd, false, {
         relative = 'win',
-        anchor = 'NE',
+        anchor = opts.position,
         width = 82,
         height = #message,
-        row = 0,
-        col = vim.api.nvim_win_get_width(0),
+        row = row + opts.y_off,
+        col = col + opts.x_off,
     })
 end
 
@@ -60,6 +63,17 @@ function M.Info:update_info_buffer()
         local curr_revision = buf.revision
         self:create_info_buffer(curr_revision)
     end
+end
+
+function M.Info:move_info_buffer()
+    local info_opts = self.session.parent.config.settings.info
+    local new_position = info_opts.position == 'NE' and 'SE' or 'NE'
+    info_opts.y_off = info_opts.y_off * -1
+    info_opts.position = new_position
+    if self:has_info_buf() then
+        self:toggle_info_buffer()
+    end
+    self:toggle_info_buffer()
 end
 
 function M.Info:close()

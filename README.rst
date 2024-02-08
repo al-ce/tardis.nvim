@@ -30,12 +30,20 @@ The default options are
             ["prev"] = '<C-k>',         -- previous entry in log (newer)
             ["quit"] = 'q',             -- quit all
             ["revision_message"] = '<C-m>', -- show revision message for current revision
+            ["move_message"] = '<C-a>', -- move the revision info window to SE or NE
         },
         initial_revisions = 10,         -- initial revisions to create buffers for
         max_revisions = 256,            -- max number of revisions to load
+
         -- Set to "" to show diff against previously viewed revision
         -- Set to e.g. "HEAD" to always diff against that revision
         diff_base = nil,
+
+        info = {
+            position = 'NE',            -- position of info relative to window
+            x_off = 2,                  -- offset of row
+            y_off = 2,                  -- offset or column
+        },
     }
 
 Usage

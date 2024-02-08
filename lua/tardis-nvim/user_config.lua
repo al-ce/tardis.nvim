@@ -6,6 +6,7 @@ local M = {}
 ---@field max_revisions integer
 ---@field initial_revisions integer
 ---@field diff_base string
+---@field info table
 
 ---@class TardisConfig
 ---@field keymap TardisKeymap
@@ -23,11 +24,17 @@ local function get_default_config()
             ['prev'] = '<C-k>',
             ['quit'] = 'q',
             ['revision_message'] = '<C-m>',
+            ['move_message'] = '<C-a>',
         },
         settings = {
             max_revisions = 256,
             initial_revisions = 10,
             diff_base = nil,
+            info = {
+                position = 'NE',
+                x_off = 2,
+                y_off = 2,
+            },
         },
         debug = false,
     }

@@ -55,6 +55,9 @@ function M.Session:create_buffer(revision)
     vim.keymap.set('n', keymap.revision_message, function()
         self.info:toggle_info_buffer()
     end, { buffer = fd })
+    vim.keymap.set('n', keymap.move_message, function()
+        self.info:move_info_buffer()
+    end, { buffer = fd })
 
     return fd
 end
