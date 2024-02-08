@@ -1,5 +1,5 @@
-local buffer = require('tardis-nvim.buffer')
 local adapters = require('tardis-nvim.adapters')
+local buffer = require('tardis-nvim.buffer')
 
 local M = {}
 
@@ -42,10 +42,18 @@ function M.Session:create_buffer(revision)
     vim.api.nvim_set_option_value('readonly', true, { buf = fd })
 
     local keymap = self.parent.config.keymap
-    vim.keymap.set('n', keymap.next, function() self:next_buffer() end, { buffer = fd })
-    vim.keymap.set('n', keymap.prev, function() self:prev_buffer() end, { buffer = fd })
-    vim.keymap.set('n', keymap.quit, function() self:close() end, { buffer = fd })
-    vim.keymap.set('n', keymap.revision_message, function() self:toggle_info_buffer() end, { buffer = fd })
+    vim.keymap.set('n', keymap.next, function()
+        self:next_buffer()
+    end, { buffer = fd })
+    vim.keymap.set('n', keymap.prev, function()
+        self:prev_buffer()
+    end, { buffer = fd })
+    vim.keymap.set('n', keymap.quit, function()
+        self:close()
+    end, { buffer = fd })
+    vim.keymap.set('n', keymap.revision_message, function()
+        self:toggle_info_buffer()
+    end, { buffer = fd })
 
     return fd
 end
@@ -68,7 +76,6 @@ function M.Session:toggle_info_buffer()
 end
 
 function M.Session:create_info_buffer(revision)
-
     local message = self.adapter.get_revision_info(revision, self)
     if not message or #message == 0 then
         vim.notify('revision_message was empty')
@@ -79,7 +86,9 @@ function M.Session:create_info_buffer(revision)
     vim.api.nvim_buf_set_lines(fd, 0, -1, false, message)
     vim.api.nvim_set_option_value('filetype', 'git', { buf = fd })
     vim.api.nvim_set_option_value('readonly', true, { buf = fd })
-    vim.keymap.set('n', 'q', function() vim.api.nvim_buf_delete(fd, { force = true }) end, { buffer = fd })
+    vim.keymap.set('n', 'q', function()
+        vim.api.nvim_buf_delete(fd, { force = true })
+    end, { buffer = fd })
 
     vim.api.nvim_open_win(fd, false, {
         relative = 'win',
@@ -87,7 +96,7 @@ function M.Session:create_info_buffer(revision)
         width = 82,
         height = #message,
         row = 0,
-        col = vim.api.nvim_win_get_width(0)
+        col = vim.api.nvim_win_get_width(0),
     })
 end
 
@@ -100,13 +109,14 @@ function M.Session:update_info_buffer()
     end
 end
 
-
 ---@param id integer
 ---@param parent TardisSessionManager
 ---@param adapter_type string
 function M.Session:init(id, parent, adapter_type)
     local adapter = adapters.get_adapter(adapter_type)
-    if not adapter then return end
+    if not adapter then
+        return
+    end
 
     self.adapter = adapter
     self.filetype = vim.api.nvim_get_option_value('filetype', { buf = 0 })
@@ -143,7 +153,7 @@ function M.Session:show_diff()
     if not diff_base or self.parent.cmd_opts.diff_base == false then
         return
     end
-    if diff_base ~= "" then
+    if diff_base ~= '' then
         diff_base = self.adapter.get_rev_parse(diff_base)
     end
     self.diff_base = diff_base
@@ -199,7 +209,9 @@ end
 ---@param index integer
 function M.Session:goto_buffer(index)
     local buf = self.buffers[index]
-    if not buf then return end
+    if not buf then
+        return
+    end
     if not buf.fd then
         buf.fd = self:create_buffer(buf.revision)
     end
@@ -209,7 +221,7 @@ function M.Session:goto_buffer(index)
 end
 
 function M.Session:update_diff_lines()
-    if self:has_diff_buf() and self.diff_base == "" then
+    if self:has_diff_buf() and self.diff_base == '' then
         self:set_diff_lines(self:get_current_buffer().revision)
     end
 end

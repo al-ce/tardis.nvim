@@ -17,7 +17,7 @@ local M = {}
 
 ---@return TardisConfig
 local function get_default_config()
-    return  {
+    return {
         keymap = {
             ['next'] = '<C-j>',
             ['prev'] = '<C-k>',

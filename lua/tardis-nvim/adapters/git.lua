@@ -7,17 +7,18 @@ local M = {}
 ---@param ... string
 ---@return string[]
 local function git(root, ...)
-    root = Job:new{
+    root = Job:new({
         command = 'git',
-        args = { '-C', root, 'rev-parse', '--show-toplevel' }
-    }:sync()[1]
-    local output = Job:new {
+        args = { '-C', root, 'rev-parse', '--show-toplevel' },
+    })
+        :sync()[1]
+    local output = Job:new({
         command = 'git',
         args = { '-C', root, ... },
         on_stderr = function(_, msg)
-            vim.print("Tardis: git failed: " .. msg, vim.log.levels.WARN)
-        end
-    }:sync()
+            vim.print('Tardis: git failed: ' .. msg, vim.log.levels.WARN)
+        end,
+    }):sync()
     return output
 end
 
@@ -52,7 +53,15 @@ end
 function M.get_revisions_for_current_file(parent)
     local root = util.dirname(parent.path)
     local file = get_git_file_path(parent.path)
-    return git(root, 'log', '-n', parent.parent.config.settings.max_revisions, '--pretty=format:%h', '--', file)
+    return git(
+        root,
+        'log',
+        '-n',
+        parent.parent.config.settings.max_revisions,
+        '--pretty=format:%h',
+        '--',
+        file
+    )
 end
 
 ---@param revision string

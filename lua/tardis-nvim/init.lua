@@ -2,7 +2,7 @@ local cfg = require('tardis-nvim.user_config')
 local sm = require('tardis-nvim.session_manager')
 
 Tardis = {
-    session_manager = nil
+    session_manager = nil,
 }
 
 ---@param user_config TardisPartialConfig?
