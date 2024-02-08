@@ -21,23 +21,20 @@ function M.Buffer:new(session, revision, fd)
     return setmetatable(buffer, self)
 end
 
----@param session TardisSession
-function M.Buffer:focus_pre(session)
-    if session:has_diff_buf() then
+function M.Buffer:focus_pre()
+    if self.session.diff:has_diff_buf() then
         vim.cmd('diffoff')
     end
 end
 
----@param session TardisSession
-function M.Buffer:focus_post(session)
-    if session:has_diff_buf() then
+function M.Buffer:focus_post()
+    if self.session.diff:has_diff_buf() then
         vim.cmd('diffthis')
     end
 end
 
----@param session TardisSession
-function M.Buffer:focus(session)
-    self:focus_pre(session)
+function M.Buffer:focus()
+    self:focus_pre()
     local current_pos = vim.api.nvim_win_get_cursor(0)
     local target_line_count = vim.api.nvim_buf_line_count(self.fd)
     if current_pos[1] >= target_line_count then
@@ -45,7 +42,7 @@ function M.Buffer:focus(session)
     end
     vim.api.nvim_win_set_buf(0, self.fd)
     vim.api.nvim_win_set_cursor(0, current_pos)
-    self:focus_post(session)
+    self:focus_post()
 end
 
 ---@param fd integer
