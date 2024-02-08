@@ -1,6 +1,7 @@
 local adapters = require('tardis-nvim.adapters')
 local buffer = require('tardis-nvim.buffer')
 local diff = require('tardis-nvim.diff')
+local info = require('tardis-nvim.info')
 
 local M = {}
 
@@ -16,7 +17,7 @@ local M = {}
 ---@field diff TardisDiff
 ---@field buffers TardisBuffer[]
 ---@field adapter TardisAdapter
----@field infobuf integer
+---@field info TardisInfo
 M.Session = {}
 
 ---@param id integer
@@ -52,58 +53,10 @@ function M.Session:create_buffer(revision)
         self:close()
     end, { buffer = fd })
     vim.keymap.set('n', keymap.revision_message, function()
-        self:toggle_info_buffer()
+        self.info:toggle_info_buffer()
     end, { buffer = fd })
 
     return fd
-end
-
-function M.Session:has_info_buf()
-    return self.infobuf and vim.api.nvim_buf_is_valid(self.infobuf)
-end
-
-function M.Session:toggle_info_buffer()
-    if self:has_info_buf() then
-        vim.api.nvim_buf_delete(self.infobuf, { force = true })
-        self.infobuf = nil
-    else
-        self:create_info_buffer(self:get_current_buffer().revision)
-    end
-end
-
----@param revision string
-function M.Session:create_info_buffer(revision)
-    local message = self.adapter.get_revision_info(revision, self)
-    if not message or #message == 0 then
-        vim.notify('revision_message was empty')
-        return
-    end
-    local fd = vim.api.nvim_create_buf(false, true)
-    self.infobuf = fd
-    vim.api.nvim_buf_set_lines(fd, 0, -1, false, message)
-    vim.api.nvim_set_option_value('filetype', 'git', { buf = fd })
-    vim.api.nvim_set_option_value('readonly', true, { buf = fd })
-    vim.keymap.set('n', 'q', function()
-        vim.api.nvim_buf_delete(fd, { force = true })
-    end, { buffer = fd })
-
-    vim.api.nvim_open_win(fd, false, {
-        relative = 'win',
-        anchor = 'NE',
-        width = 82,
-        height = #message,
-        row = 0,
-        col = vim.api.nvim_win_get_width(0),
-    })
-end
-
-function M.Session:update_info_buffer()
-    if self:has_info_buf() then
-        self:toggle_info_buffer()
-        local buf = self:get_current_buffer()
-        local curr_revision = buf.revision
-        self:create_info_buffer(curr_revision)
-    end
 end
 
 ---@param id integer
@@ -132,6 +85,7 @@ function M.Session:init(id, parent, adapter_type)
     end
 
     self.diff = diff.Diff:new(self)
+    self.info = info.Info:new(self)
 
     for i, revision in ipairs(log) do
         local fd = nil
@@ -143,12 +97,6 @@ function M.Session:init(id, parent, adapter_type)
     parent:on_session_opened(self)
 end
 
-function M.Session:close_post()
-    if self:has_info_buf() then
-        vim.api.nvim_buf_delete(self.infobuf, { force = true })
-    end
-end
-
 function M.Session:close()
     self.diff:close()
     for _, buf in ipairs(self.buffers) do
@@ -157,7 +105,7 @@ function M.Session:close()
     if self.parent then
         self.parent:on_session_closed(self)
     end
-    self:close_post()
+    self.info:close()
 end
 
 ---@return TardisBuffer
@@ -176,7 +124,7 @@ function M.Session:goto_buffer(index)
     end
     buf:focus()
     self.current_buffer_index = index
-    self:update_info_buffer()
+    self.info:update_info_buffer()
 end
 
 function M.Session:next_buffer()
