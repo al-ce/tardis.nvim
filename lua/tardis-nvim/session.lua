@@ -140,7 +140,7 @@ end
 
 function M.Session:show_diff()
     local diff_base = self.parent.cmd_opts.diff_base or self.parent.config.settings.diff_base
-    if not diff_base then
+    if not diff_base or self.parent.cmd_opts.diff_base == false then
         return
     end
     if diff_base ~= "" then
