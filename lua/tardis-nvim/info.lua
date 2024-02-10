@@ -44,16 +44,27 @@ function M.Info:create_info_buffer(revision)
     end, { buffer = fd })
 
     local opts = self.session.parent.config.settings.info
-    local row = opts.position:match('N') and 0 or vim.api.nvim_win_get_height(0)
-    local col = opts.position:match('W') and 0 or vim.api.nvim_win_get_width(0)
-    vim.api.nvim_open_win(fd, false, {
-        relative = 'win',
-        anchor = opts.position,
-        width = 82,
-        height = #message,
-        row = row + opts.y_off,
-        col = col + opts.x_off,
-    })
+    if opts.split then
+        local split_opt = vim.api.nvim_get_option_value('splitbelow', { scope = 'global' })
+        local win = vim.api.nvim_get_current_win()
+        vim.api.nvim_set_option_value('splitbelow', true, { scope = 'global' })
+        vim.cmd('6split')
+        vim.api.nvim_win_set_buf(0, fd)
+        vim.api.nvim_set_current_win(win)
+        vim.api.nvim_set_option_value('splitbelow', split_opt, { scope = 'global' })
+    else
+        local row = opts.position:match('N') and 0 or vim.api.nvim_win_get_height(0)
+        local col = opts.position:match('W') and 0 or vim.api.nvim_win_get_width(0)
+        vim.api.nvim_open_win(fd, false, {
+            relative = 'win',
+            anchor = opts.position,
+            width = 82,
+            height = #message,
+            row = row + opts.y_off,
+            col = col + opts.x_off,
+        })
+    end
+    vim.api.nvim_buf_set_name(fd, 'TARDIS Info')
 end
 
 function M.Info:update_info_buffer()

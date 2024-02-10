@@ -43,6 +43,7 @@ The default options are
             position = 'NE',            -- position of info relative to window
             x_off = 2,                  -- offset of row
             y_off = 2,                  -- offset or column
+            split = false,              -- open info in a split instead of float
         },
     }
 
