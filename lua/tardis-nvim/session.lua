@@ -91,7 +91,6 @@ end
 function M.Session:set_keymaps(bufnr)
     local telescope_opts = self.parent.config.settings.telescope
     local keymap = self.parent.config.keymap
-
     -- stylua: ignore
     local kv = {
         [keymap.next] = function() self:next_buffer() end,
@@ -102,14 +101,14 @@ function M.Session:set_keymaps(bufnr)
         [keymap.telescope] = function() tardis_telescope.git_commits(self, telescope_opts) end,
         [keymap.lock_diff_base] = function()
             if self.diff.diff_base == '' then
-                self.diff.diff_base = self.buffers[self.current_buffer_index + 1].revision
+                local prev = math.min(self.current_buffer_index + 1, #self.buffers)
+                self.diff.diff_base = self.buffers[prev].revision
             else
                 self.diff.diff_base = ''
                 self.diff:update_diff()
             end
         end,
     }
-
     for k, v in pairs(kv) do
         vim.keymap.set('n', k, v, { buffer = bufnr })
     end
