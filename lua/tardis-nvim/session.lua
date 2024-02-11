@@ -23,6 +23,7 @@ M.Session = {}
 
 ---@param id integer
 ---@param parent TardisSessionManager
+---@return TardisSession
 function M.Session:new(id, parent)
     local session = {}
     setmetatable(session, self)

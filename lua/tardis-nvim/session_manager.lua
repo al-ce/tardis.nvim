@@ -16,6 +16,7 @@ function M.SessionManager:init(config)
 end
 
 ---@param config TardisConfig
+---@return TardisSessionManager
 function M.SessionManager:new(config)
     local session_manager = {}
     self.__index = self

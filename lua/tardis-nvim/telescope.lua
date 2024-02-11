@@ -6,6 +6,7 @@ local builtin = require('telescope.builtin')
 local previewers = require('telescope.previewers')
 
 ---@param path string
+---@return function
 local function delta(path)
     return previewers.new_termopen_previewer({
         get_command = function(entry)
@@ -24,6 +25,7 @@ local function delta(path)
     })
 end
 
+---@return boolean
 local function has_delta()
     local ok, _ = pcall(function()
         return vim.fn.executable('delta')

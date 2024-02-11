@@ -5,7 +5,8 @@ local M = {}
 ---@field session TardisSession
 M.Info = {}
 
----@param self TardisInfo
+---@param session TardisSession
+---@return TardisInfo
 function M.Info:new(session)
     local info = {}
     self.__index = self

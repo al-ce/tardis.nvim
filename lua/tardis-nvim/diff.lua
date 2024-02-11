@@ -6,7 +6,7 @@ local M = {}
 ---@field diff_buf integer
 M.Diff = {}
 
----@param self TardisDiff
+---@param session TardisSession
 function M.Diff:new(session)
     local diff = {}
     self.__index = self
@@ -14,7 +14,7 @@ function M.Diff:new(session)
     return setmetatable(diff, self)
 end
 
----@param self TardisDiff
+---@param session TardisSession
 function M.Diff:init(session)
     self.session = session
     local initial_diff_base = self.session.parent.cmd_opts.diff_base
