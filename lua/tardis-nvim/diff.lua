@@ -15,6 +15,10 @@ function M.Diff:new(session)
     return setmetatable(diff, self)
 end
 
+function M.Diff:has_diff_buf()
+    return self.diff_buf and vim.api.nvim_buf_is_valid(self.diff_buf)
+end
+
 function M.Diff:create_buffer()
     local initial_diff_base = self.session.parent.cmd_opts.diff_base
         or self.session.parent.config.settings.diff_base
@@ -68,8 +72,15 @@ function M.Diff:close()
     end
 end
 
-function M.Diff:has_diff_buf()
-    return self.diff_buf and vim.api.nvim_buf_is_valid(self.diff_buf)
+function M.Diff:toggle_diff()
+    if self:has_diff_buf() then
+        self:close()
+        vim.cmd('diffoff')
+    else
+        self:create_buffer()
+        self:update_diff()
+        self.session.info:update_info_buffer()
+    end
 end
 
 function M.Diff:update_diff(index)

@@ -47,11 +47,10 @@ function M.Info:create_info_buffer(revision)
     local opts = self.session.parent.config.settings.info
     if opts.split then
         local split_opt = vim.api.nvim_get_option_value('splitbelow', { scope = 'global' })
-        local win = vim.api.nvim_get_current_win()
         vim.api.nvim_set_option_value('splitbelow', true, { scope = 'global' })
         vim.cmd(opts.height .. 'split')
         vim.api.nvim_win_set_buf(0, fd)
-        vim.api.nvim_set_current_win(win)
+        vim.api.nvim_set_current_win(self.session.origin_win)
         vim.api.nvim_set_option_value('splitbelow', split_opt, { scope = 'global' })
     else
         local row = opts.position:match('N') and 0 or vim.api.nvim_win_get_height(0)
@@ -59,8 +58,8 @@ function M.Info:create_info_buffer(revision)
         vim.api.nvim_open_win(fd, false, {
             relative = 'win',
             anchor = opts.position,
-            height = opts.height or 10,
-            width = opts.width or 82,
+            height = opts.height,
+            width = opts.width,
             border = 'single',
             row = row + opts.y_off,
             col = col + opts.x_off,
@@ -92,6 +91,7 @@ end
 function M.Info:close()
     if self:has_info_buf() then
         vim.api.nvim_buf_delete(self.infobuf, { force = true })
+        self.infobuf = nil
     end
 end
 

@@ -26,8 +26,9 @@ local function get_default_config()
             ['quit'] = 'q',
             ['revision_message'] = '<C-m>',
             ['move_message'] = '<C-a>',
-            ['telescope'] = '<C-t>',
             ['lock_diff_base'] = '<C-l>',
+            ['toggle_diffsplit'] = '<M-d>',
+            ['telescope'] = '<C-t>',
         },
         settings = {
             max_revisions = 256,
@@ -36,6 +37,8 @@ local function get_default_config()
             info = {
                 on_launch = true,
                 split = false,
+                height = 6,
+                width = 82,
                 position = 'SE',
                 x_off = 0,
                 y_off = -1,

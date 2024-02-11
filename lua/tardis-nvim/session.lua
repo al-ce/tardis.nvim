@@ -114,6 +114,7 @@ function M.Session:set_keymaps(bufnr)
                 self.diff:update_diff()
             end
         end,
+        [keymap.toggle_diffsplit] = function() self.diff:toggle_diff() end,
     }
     for k, v in pairs(kv) do
         vim.keymap.set('n', k, v, { buffer = bufnr })

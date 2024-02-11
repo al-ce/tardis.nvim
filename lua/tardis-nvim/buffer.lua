@@ -31,6 +31,7 @@ function M.Buffer:focus_post()
     if self.session.diff:has_diff_buf() then
         vim.cmd('diffthis')
     end
+    self.session.info:update_info_buffer()
 end
 
 function M.Buffer:focus()
