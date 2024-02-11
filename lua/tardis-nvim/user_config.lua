@@ -32,13 +32,13 @@ local function get_default_config()
         settings = {
             max_revisions = 256,
             initial_revisions = 10,
-            diff_base = nil,
+            diff_base = "",
             info = {
-                on_launch = false,
-                position = 'NE',
-                x_off = 2,
-                y_off = 2,
+                on_launch = true,
                 split = false,
+                position = 'SE',
+                x_off = 0,
+                y_off = -1,
             },
             telescope = {
                 delta = true,

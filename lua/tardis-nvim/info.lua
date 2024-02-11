@@ -48,7 +48,7 @@ function M.Info:create_info_buffer(revision)
         local split_opt = vim.api.nvim_get_option_value('splitbelow', { scope = 'global' })
         local win = vim.api.nvim_get_current_win()
         vim.api.nvim_set_option_value('splitbelow', true, { scope = 'global' })
-        vim.cmd('6split')
+        vim.cmd(opts.height .. 'split')
         vim.api.nvim_win_set_buf(0, fd)
         vim.api.nvim_set_current_win(win)
         vim.api.nvim_set_option_value('splitbelow', split_opt, { scope = 'global' })
@@ -58,8 +58,9 @@ function M.Info:create_info_buffer(revision)
         vim.api.nvim_open_win(fd, false, {
             relative = 'win',
             anchor = opts.position,
-            width = 82,
-            height = #message,
+            height = opts.height or 10,
+            width = opts.width or 82,
+            border = 'single',
             row = row + opts.y_off,
             col = col + opts.x_off,
         })

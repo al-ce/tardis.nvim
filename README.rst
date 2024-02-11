@@ -39,14 +39,20 @@ The default options are
 
         -- Set to "" to show diff against previously viewed revision
         -- Set to e.g. "HEAD" to always diff against that revision
-        diff_base = nil,
+        -- Set to nil to not diff at all
+        diff_base = "",
 
         info = {
             on_launch = true,           -- show info on Tardis launch
-            position = 'NE',            -- position of info relative to window
-            x_off = 2,                  -- offset of row
-            y_off = 2,                  -- offset or column
             split = false,              -- open info in a split instead of float
+            height = 10,                -- height of the info window
+            width = 82,                 -- width of the info window (float only)
+            border = 'single',          -- border of the info window
+
+            -- Float options
+            position = 'SE',            -- position of info relative to window
+            x_off = 0,                  -- offset of row
+            y_off = -1,                  -- offset or column
         },
 
         -- any opts valid for telescope.builtin.git_bcommits
