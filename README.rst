@@ -32,6 +32,7 @@ The default options are
             ["revision_message"] = '<C-m>', -- show revision message for current revision
             ["move_message"] = '<C-a>', -- move the revision info window to SE or NE
             ['lock_diff_base'] = '<C-l>', -- lock/unlock the diff base to current
+            ['telescope'] = '<C-t>',    -- open telescope picker to go to revision
         },
         initial_revisions = 10,         -- initial revisions to create buffers for
         max_revisions = 256,            -- max number of revisions to load
@@ -46,6 +47,11 @@ The default options are
             y_off = 2,                  -- offset or column
             split = false,              -- open info in a split instead of float
         },
+
+        -- any opts valid for telescope.builtin.git_bcommits
+        telescope = {
+            delta = true,               -- use delta as the preview pager
+        }
     }
 
 Usage
@@ -68,6 +74,24 @@ Override your configuration's diff base with the `diff_base` option in a
        diff_base = "HEAD~2"  -- e.g. would override `""` in the setup
    }
 
+Telescope Integration
+---------------------
+
+`keymap.telescope` opens a telescope picker that shows the revisions of the
+current file plus a preview of the diff. Make giant leaps through history!
+
+The following mappings (along with your defaults) are available in the
+telescope picker:
+
+- `<CR>` changes the current revision to the selection and sets its diff base to
+the previous commit.
+
+- `<C-CR>` changes the diff base to the selection and locks it, without changing
+the current revision to diff against. The diff base is 'locked', so cycling
+through revisions with `keymap.next` and `keymap.prev` will always diff against
+the locked base. Unlock with `keymap.lock_diff_base`.
+
+- `keymap.telescope` closes the picker
 
 Known issues
 ============

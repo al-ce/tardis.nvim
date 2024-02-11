@@ -2,6 +2,7 @@ local adapters = require('tardis-nvim.adapters')
 local buffer = require('tardis-nvim.buffer')
 local diff = require('tardis-nvim.diff')
 local info = require('tardis-nvim.info')
+local tardis_telescope = require('tardis-nvim.telescope')
 
 local M = {}
 
@@ -36,6 +37,7 @@ function M.Session:create_buffer(revision)
     local fd = vim.api.nvim_create_buf(false, true)
     local file_at_revision = self.adapter.get_file_at_revision(revision, self)
     local filename = self.path .. ' @ ' .. revision .. ' - TARDIS'
+    local telescope_opts = self.parent.config.settings.telescope
 
     vim.api.nvim_buf_set_name(fd, filename)
     vim.api.nvim_buf_set_lines(fd, 0, -1, false, file_at_revision)
@@ -58,7 +60,9 @@ function M.Session:create_buffer(revision)
     vim.keymap.set('n', keymap.move_message, function()
         self.info:move_info_buffer()
     end, { buffer = fd })
-
+    vim.keymap.set('n', keymap.telescope, function()
+        tardis_telescope.git_commits(self, telescope_opts)
+    end, { buffer = fd })
     vim.keymap.set('n', keymap.lock_diff_base, function()
         if self.diff.diff_base == '' then
             self.diff.diff_base = self.buffers[self.current_buffer_index + 1].revision
@@ -95,7 +99,6 @@ function M.Session:init(id, parent, adapter_type)
         return
     end
 
-    self.diff = diff.Diff:new(self)
     self.info = info.Info:new(self)
 
     for i, revision in ipairs(log) do
@@ -105,6 +108,9 @@ function M.Session:init(id, parent, adapter_type)
         end
         table.insert(self.buffers, buffer.Buffer:new(self, revision, fd))
     end
+
+    self.diff = diff.Diff:new(self)
+
     parent:on_session_opened(self)
 end
 
@@ -139,13 +145,13 @@ function M.Session:goto_buffer(index)
 end
 
 function M.Session:next_buffer()
-    self.diff:update_diff()
     self:goto_buffer(self.current_buffer_index + 1)
+    self.diff:update_diff()
 end
 
 function M.Session:prev_buffer()
-    self.diff:update_diff()
     self:goto_buffer(self.current_buffer_index - 1)
+    self.diff:update_diff()
 end
 
 return M

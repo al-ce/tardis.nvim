@@ -7,6 +7,7 @@ local M = {}
 ---@field initial_revisions integer
 ---@field diff_base string
 ---@field info table
+---@field telescope table
 
 ---@class TardisConfig
 ---@field keymap TardisKeymap
@@ -25,6 +26,7 @@ local function get_default_config()
             ['quit'] = 'q',
             ['revision_message'] = '<C-m>',
             ['move_message'] = '<C-a>',
+            ['telescope'] = '<C-t>',
             ['lock_diff_base'] = '<C-l>',
         },
         settings = {
@@ -35,6 +37,9 @@ local function get_default_config()
                 position = 'NE',
                 x_off = 2,
                 y_off = 2,
+            },
+            telescope = {
+                delta = true,
             },
         },
         debug = false,

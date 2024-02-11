@@ -17,18 +17,23 @@ end
 ---@param self TardisDiff
 function M.Diff:init(session)
     self.session = session
-    local diff_base = self.session.parent.cmd_opts.diff_base
+    local initial_diff_base = self.session.parent.cmd_opts.diff_base
         or self.session.parent.config.settings.diff_base
-    if not diff_base or self.session.parent.cmd_opts.diff_base == false then
+    if not initial_diff_base or self.session.parent.cmd_opts.diff_base == false then
         return
     end
-    if diff_base ~= '' then
-        diff_base = self.session.adapter.get_rev_parse(diff_base)
+
+    if initial_diff_base == '' then
+        initial_diff_base = self.session.buffers[2].revision
+        self.diff_base = ''
+    else
+        initial_diff_base = self.session.adapter.get_rev_parse(initial_diff_base)
+        self.diff_base = initial_diff_base
     end
-    self.diff_base = diff_base
+
     self.diff_buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, self.diff_buf)
-    self:set_diff_lines(self.diff_base)
+    self:set_diff_lines(initial_diff_base)
     vim.api.nvim_set_option_value('filetype', self.session.filetype, { buf = self.diff_buf })
     vim.api.nvim_set_option_value('readonly', true, { buf = self.diff_buf })
     vim.cmd('vertical diffsplit')
@@ -58,10 +63,14 @@ function M.Diff:has_diff_buf()
     return self.diff_buf and vim.api.nvim_buf_is_valid(self.diff_buf)
 end
 
-function M.Diff:update_diff()
-    if self:has_diff_buf() and self.diff_base == '' then
-        self:set_diff_lines(self.session:get_current_buffer().revision)
+function M.Diff:update_diff(index)
+    if not self:has_diff_buf() or self.diff_base ~= '' then
+        return
     end
+    index = index or self.session.current_buffer_index + 1
+    index = math.min(index, #self.session.buffers)
+    local revision = self.session.buffers[index].revision
+    self:set_diff_lines(revision)
 end
 
 return M
