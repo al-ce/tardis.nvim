@@ -42,6 +42,7 @@ The default options are
         diff_base = nil,
 
         info = {
+            on_launch = true,           -- show info on Tardis launch
             position = 'NE',            -- position of info relative to window
             x_off = 2,                  -- offset of row
             y_off = 2,                  -- offset or column

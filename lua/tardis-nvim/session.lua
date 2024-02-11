@@ -57,7 +57,6 @@ function M.Session:init(id, parent, adapter_type)
         return
     end
 
-    self.info = info.Info:new(self)
 
     for i, revision in ipairs(log) do
         local fd = nil
@@ -65,6 +64,11 @@ function M.Session:init(id, parent, adapter_type)
             fd = self:create_buffer(revision)
         end
         table.insert(self.buffers, buffer.Buffer:new(self, revision, fd))
+    end
+
+    self.info = info.Info:new(self)
+    if self.parent.config.settings.info.on_launch then
+        self.info:create_info_buffer(log[1])
     end
 
     self.diff = diff.Diff:new(self)

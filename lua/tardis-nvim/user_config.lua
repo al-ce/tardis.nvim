@@ -34,9 +34,11 @@ local function get_default_config()
             initial_revisions = 10,
             diff_base = nil,
             info = {
+                on_launch = false,
                 position = 'NE',
                 x_off = 2,
                 y_off = 2,
+                split = false,
             },
             telescope = {
                 delta = true,
