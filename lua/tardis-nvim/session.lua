@@ -32,48 +32,6 @@ function M.Session:new(id, parent)
     return session
 end
 
----@param revision string
-function M.Session:create_buffer(revision)
-    local fd = vim.api.nvim_create_buf(false, true)
-    local file_at_revision = self.adapter.get_file_at_revision(revision, self)
-    local filename = self.path .. ' @ ' .. revision .. ' - TARDIS'
-    local telescope_opts = self.parent.config.settings.telescope
-
-    vim.api.nvim_buf_set_name(fd, filename)
-    vim.api.nvim_buf_set_lines(fd, 0, -1, false, file_at_revision)
-    vim.api.nvim_set_option_value('filetype', self.filetype, { buf = fd })
-    vim.api.nvim_set_option_value('readonly', true, { buf = fd })
-
-    local keymap = self.parent.config.keymap
-    vim.keymap.set('n', keymap.next, function()
-        self:next_buffer()
-    end, { buffer = fd })
-    vim.keymap.set('n', keymap.prev, function()
-        self:prev_buffer()
-    end, { buffer = fd })
-    vim.keymap.set('n', keymap.quit, function()
-        self:close()
-    end, { buffer = fd })
-    vim.keymap.set('n', keymap.revision_message, function()
-        self.info:toggle_info_buffer()
-    end, { buffer = fd })
-    vim.keymap.set('n', keymap.move_message, function()
-        self.info:move_info_buffer()
-    end, { buffer = fd })
-    vim.keymap.set('n', keymap.telescope, function()
-        tardis_telescope.git_commits(self, telescope_opts)
-    end, { buffer = fd })
-    vim.keymap.set('n', keymap.lock_diff_base, function()
-        if self.diff.diff_base == '' then
-            self.diff.diff_base = self.buffers[self.current_buffer_index + 1].revision
-        else
-            self.diff.diff_base = ''
-            self.diff:update_diff()
-        end
-    end, { buffer = fd })
-    return fd
-end
-
 ---@param id integer
 ---@param parent TardisSessionManager
 ---@param adapter_type string
@@ -112,6 +70,49 @@ function M.Session:init(id, parent, adapter_type)
     self.diff = diff.Diff:new(self)
 
     parent:on_session_opened(self)
+end
+
+---@param revision string
+function M.Session:create_buffer(revision)
+    local fd = vim.api.nvim_create_buf(false, true)
+    local file_at_revision = self.adapter.get_file_at_revision(revision, self)
+    local filename = self.path .. ' @ ' .. revision .. ' - TARDIS'
+
+    vim.api.nvim_buf_set_name(fd, filename)
+    vim.api.nvim_buf_set_lines(fd, 0, -1, false, file_at_revision)
+    vim.api.nvim_set_option_value('filetype', self.filetype, { buf = fd })
+    vim.api.nvim_set_option_value('readonly', true, { buf = fd })
+
+    self:set_keymaps(fd)
+    return fd
+end
+
+---@param bufnr integer
+function M.Session:set_keymaps(bufnr)
+    local telescope_opts = self.parent.config.settings.telescope
+    local keymap = self.parent.config.keymap
+
+    -- stylua: ignore
+    local kv = {
+        [keymap.next] = function() self:next_buffer() end,
+        [keymap.prev] = function() self:prev_buffer() end,
+        [keymap.quit] = function() self:close() end,
+        [keymap.revision_message] = function() self.info:toggle_info_buffer() end,
+        [keymap.move_message] = function() self.info:move_info_buffer() end,
+        [keymap.telescope] = function() tardis_telescope.git_commits(self, telescope_opts) end,
+        [keymap.lock_diff_base] = function()
+            if self.diff.diff_base == '' then
+                self.diff.diff_base = self.buffers[self.current_buffer_index + 1].revision
+            else
+                self.diff.diff_base = ''
+                self.diff:update_diff()
+            end
+        end,
+    }
+
+    for k, v in pairs(kv) do
+        vim.keymap.set('n', k, v, { buffer = bufnr })
+    end
 end
 
 function M.Session:close()
