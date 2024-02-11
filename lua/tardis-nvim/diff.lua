@@ -5,6 +5,7 @@ local M = {}
 ---@field diff_base string
 ---@field diff_buf integer
 ---@field diff_win integer
+---@field locked boolean
 M.Diff = {}
 
 ---@param session TardisSession
@@ -33,6 +34,7 @@ function M.Diff:create_buffer()
         initial_diff_base = self.session.adapter.get_rev_parse(initial_diff_base)
         self.diff_base = initial_diff_base
     end
+    self.locked = false
 
     local split_opt = vim.api.nvim_get_option_value('splitright', {})
     vim.api.nvim_set_option_value('splitright', false, {})
@@ -91,6 +93,21 @@ function M.Diff:update_diff(index)
     index = math.min(index, #self.session.buffers)
     local revision = self.session.buffers[index].revision
     self:set_diff_lines(revision)
+end
+
+function M.Diff:lock_diff_base()
+    local diff_name = vim.api.nvim_buf_get_name(self.diff_buf)
+    if self.diff_base == '' then
+        diff_name = diff_name .. ' [locked]'
+        local prev = math.min(self.session.current_buffer_index + 1, #self.session.buffers)
+        self.diff_base = self.session.buffers[prev].revision
+        self.locked = true
+    else
+        self.diff_base = ''
+        self.locked = false
+    end
+    vim.api.nvim_buf_set_name(self.diff_buf, diff_name)
+    self:update_diff()
 end
 
 return M

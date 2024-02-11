@@ -105,15 +105,7 @@ function M.Session:set_keymaps(bufnr)
         [keymap.revision_message] = function() self.info:toggle_info_buffer() end,
         [keymap.move_message] = function() self.info:move_info_buffer() end,
         [keymap.telescope] = function() tardis_telescope.git_commits(self, telescope_opts) end,
-        [keymap.lock_diff_base] = function()
-            if self.diff.diff_base == '' then
-                local prev = math.min(self.current_buffer_index + 1, #self.buffers)
-                self.diff.diff_base = self.buffers[prev].revision
-            else
-                self.diff.diff_base = ''
-                self.diff:update_diff()
-            end
-        end,
+        [keymap.lock_diff_base] = function() self.diff:lock_diff_base() end,
         [keymap.toggle_diffsplit] = function() self.diff:toggle_diff() end,
     }
     for k, v in pairs(kv) do
