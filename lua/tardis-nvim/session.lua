@@ -59,6 +59,14 @@ function M.Session:create_buffer(revision)
         self.info:move_info_buffer()
     end, { buffer = fd })
 
+    vim.keymap.set('n', keymap.lock_diff_base, function()
+        if self.diff.diff_base == '' then
+            self.diff.diff_base = self.buffers[self.current_buffer_index + 1].revision
+        else
+            self.diff.diff_base = ''
+            self.diff:update_diff()
+        end
+    end, { buffer = fd })
     return fd
 end
 

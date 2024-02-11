@@ -25,6 +25,7 @@ local function get_default_config()
             ['quit'] = 'q',
             ['revision_message'] = '<C-m>',
             ['move_message'] = '<C-a>',
+            ['lock_diff_base'] = '<C-l>',
         },
         settings = {
             max_revisions = 256,

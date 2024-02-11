@@ -31,6 +31,7 @@ The default options are
             ["quit"] = 'q',             -- quit all
             ["revision_message"] = '<C-m>', -- show revision message for current revision
             ["move_message"] = '<C-a>', -- move the revision info window to SE or NE
+            ['lock_diff_base'] = '<C-l>', -- lock/unlock the diff base to current
         },
         initial_revisions = 10,         -- initial revisions to create buffers for
         max_revisions = 256,            -- max number of revisions to load
