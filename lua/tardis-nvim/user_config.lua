@@ -32,7 +32,7 @@ local function get_default_config()
         settings = {
             max_revisions = 256,
             initial_revisions = 10,
-            diff_base = "",
+            diff_base = '',
             info = {
                 on_launch = true,
                 split = false,

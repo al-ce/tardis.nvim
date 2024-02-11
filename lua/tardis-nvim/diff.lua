@@ -4,19 +4,18 @@ local M = {}
 ---@field session TardisSession
 ---@field diff_base string
 ---@field diff_buf integer
+---@field diff_win integer
 M.Diff = {}
 
 ---@param session TardisSession
 function M.Diff:new(session)
     local diff = {}
     self.__index = self
-    self:init(session)
+    self.session = session
     return setmetatable(diff, self)
 end
 
----@param session TardisSession
-function M.Diff:init(session)
-    self.session = session
+function M.Diff:create_buffer()
     local initial_diff_base = self.session.parent.cmd_opts.diff_base
         or self.session.parent.config.settings.diff_base
     if not initial_diff_base or self.session.parent.cmd_opts.diff_base == false then
@@ -31,12 +30,23 @@ function M.Diff:init(session)
         self.diff_base = initial_diff_base
     end
 
+    local split_opt = vim.api.nvim_get_option_value('splitright', {})
+    vim.api.nvim_set_option_value('splitright', false, {})
+    vim.cmd('vsplit')
+
+    self.diff_win = vim.api.nvim_get_current_win()
     self.diff_buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_win_set_buf(0, self.diff_buf)
+    vim.api.nvim_win_set_buf(self.diff_win, self.diff_buf)
+    vim.api.nvim_set_current_win(self.diff_win)
     self:set_diff_lines(initial_diff_base)
     vim.api.nvim_set_option_value('filetype', self.session.filetype, { buf = self.diff_buf })
     vim.api.nvim_set_option_value('readonly', true, { buf = self.diff_buf })
-    vim.cmd('vertical diffsplit')
+    vim.cmd('diffthis')
+
+    vim.api.nvim_set_current_win(self.session.origin_win)
+    vim.cmd('diffthis')
+
+    vim.api.nvim_set_option_value('splitright', split_opt, {})
 end
 
 ---@param revision string
@@ -49,11 +59,10 @@ end
 
 function M.Diff:close()
     if self:has_diff_buf() then
-        vim.cmd('windo diffoff')
-        vim.api.nvim_set_current_win(self.session.origin_win)
-        vim.cmd('e ' .. self.session.path)
-        vim.api.nvim_win_set_cursor(0, self.session.origin_pos)
+        vim.api.nvim_set_current_win(self.diff_win)
+        vim.cmd('diffoff')
         vim.api.nvim_buf_delete(self.diff_buf, { force = true })
+        vim.api.nvim_set_current_win(self.session.origin_win)
     else
         vim.cmd('diffoff')
     end

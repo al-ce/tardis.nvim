@@ -58,7 +58,6 @@ function M.Session:init(id, parent, adapter_type)
         return
     end
 
-
     for i, revision in ipairs(log) do
         local fd = nil
         if i < parent.config.settings.initial_revisions then
@@ -68,11 +67,13 @@ function M.Session:init(id, parent, adapter_type)
     end
 
     self.info = info.Info:new(self)
+    self.diff = diff.Diff:new(self)
+
+    self:goto_buffer(1)
+    self.diff:create_buffer()
     if self.parent.config.settings.info.on_launch then
         self.info:create_info_buffer(log[1])
     end
-
-    self.diff = diff.Diff:new(self)
 
     parent:on_session_opened(self)
 end
@@ -120,7 +121,8 @@ function M.Session:set_keymaps(bufnr)
 end
 
 function M.Session:close()
-    self.diff:close()
+    vim.cmd('e ' .. self.path)
+    vim.api.nvim_win_set_cursor(0, self.origin_pos)
     for _, buf in ipairs(self.buffers) do
         buf:close()
     end
@@ -128,6 +130,7 @@ function M.Session:close()
         self.parent:on_session_closed(self)
     end
     self.info:close()
+    self.diff:close()
 end
 
 ---@return TardisBuffer

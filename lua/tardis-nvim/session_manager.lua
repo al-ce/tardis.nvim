@@ -28,9 +28,8 @@ end
 ---@param opts table
 function M.SessionManager:create_session(opts)
     self.cmd_opts = opts or {}
-    local session = ses.Session:new(self.next, self)
+    ses.Session:new(self.next, self)
     self.next = self.next + 1
-    session:goto_buffer(1)
 end
 
 ---@param session TardisSession
