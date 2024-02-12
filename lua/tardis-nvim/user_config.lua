@@ -29,6 +29,7 @@ local function get_default_config()
             ['move_message'] = '<C-a>',
             ['lock_diff_base'] = '<C-l>',
             ['toggle_diff'] = '<M-d>',
+            ['toggle_split'] = '<C-s>',
             ['telescope'] = '<C-t>',
         },
         settings = {

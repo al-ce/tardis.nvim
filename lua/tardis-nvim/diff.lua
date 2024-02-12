@@ -61,7 +61,9 @@ function M.Diff:create_buffer()
     local config = self.session.parent.config.settings
     local initial_diff_base = config.diff_base
 
-    self.diff_split = config.diff_split
+    if self.diff_split == nil then
+        self.diff_split = config.diff_split
+    end
 
     if initial_diff_base == '' or self.diff_split == false then
         initial_diff_base = self.session.buffers[2].revision
@@ -119,6 +121,12 @@ function M.Diff:toggle_diff()
         self:update_diff()
         self.session.info:update_info_buffer()
     end
+end
+
+function M.Diff:toggle_split()
+    self.diff_split = not self.diff_split
+    self:close()
+    self:create_buffer()
 end
 
 ---@param index integer?

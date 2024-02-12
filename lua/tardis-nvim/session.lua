@@ -70,10 +70,10 @@ function M.Session:init(id, parent, adapter_type)
     self.diff = diff.Diff:new(self)
 
     self:goto_buffer(1)
-    self.diff:create_buffer()
     if self.parent.config.settings.info.on_launch then
         self.info:create_info_buffer(log[1])
     end
+    self.diff:create_buffer()
 
     parent:on_session_opened(self)
 end
@@ -104,9 +104,10 @@ function M.Session:set_keymaps(bufnr)
         [keymap.quit] = function() self:close() end,
         [keymap.revision_message] = function() self.info:toggle_info_buffer() end,
         [keymap.move_message] = function() self.info:move_info_buffer() end,
-        [keymap.telescope] = function() tardis_telescope.git_commits(self, telescope_opts) end,
         [keymap.lock_diff_base] = function() self.diff:lock_diff_base() end,
         [keymap.toggle_diff] = function() self.diff:toggle_diff() end,
+        [keymap.toggle_split] = function() self.diff:toggle_split() end,
+        [keymap.telescope] = function() tardis_telescope.git_commits(self, telescope_opts) end,
     }
     for k, v in pairs(kv) do
         vim.keymap.set('n', k, v, { buffer = bufnr })
