@@ -87,7 +87,7 @@ function M.Session:create_buffer(revision)
     vim.api.nvim_buf_set_name(fd, filename)
     vim.api.nvim_buf_set_lines(fd, 0, -1, false, file_at_revision)
     vim.api.nvim_set_option_value('filetype', self.filetype, { buf = fd })
-    vim.api.nvim_set_option_value('readonly', true, { buf = fd })
+    vim.api.nvim_set_option_value('modifiable', false, { buf = fd })
 
     self:set_keymaps(fd)
     return fd

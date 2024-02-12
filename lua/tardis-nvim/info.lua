@@ -42,7 +42,7 @@ function M.Info:create_info_buffer(revision)
     self.infobuf = fd
     vim.api.nvim_buf_set_lines(fd, 0, -1, false, message)
     vim.api.nvim_set_option_value('filetype', 'git', { buf = fd })
-    vim.api.nvim_set_option_value('readonly', true, { buf = fd })
+    vim.api.nvim_set_option_value('modifiable', false, { buf = fd })
     vim.keymap.set('n', 'q', function()
         vim.api.nvim_buf_delete(fd, { force = true })
     end, { buffer = fd })

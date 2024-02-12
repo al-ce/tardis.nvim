@@ -57,7 +57,7 @@ function M.Diff:create_buffer()
     vim.api.nvim_set_current_win(self.diff_win)
     self:set_diff_lines(initial_diff_base)
     vim.api.nvim_set_option_value('filetype', self.session.filetype, { buf = self.diff_buf })
-    vim.api.nvim_set_option_value('readonly', true, { buf = self.diff_buf })
+    vim.api.nvim_set_option_value('modifiable', false, { buf = self.diff_buf })
 
     self:show(self.diff_win, true)
     self:show(self.session.origin_win, true)
@@ -72,7 +72,9 @@ function M.Diff:set_diff_lines(revision)
     local lines = self.session.adapter.get_file_at_revision(revision, self.session)
     local diff_name = vim.fn.expand(self.session.path) .. ' @ ' .. revision .. ' - TARDIS diff base'
     vim.api.nvim_buf_set_name(self.diff_buf, diff_name)
+    vim.api.nvim_set_option_value('modifiable', true, { buf = self.diff_buf })
     vim.api.nvim_buf_set_lines(self.diff_buf, 0, -1, false, lines)
+    vim.api.nvim_set_option_value('modifiable', false, { buf = self.diff_buf })
 end
 
 function M.Diff:close()
