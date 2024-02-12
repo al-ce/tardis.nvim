@@ -119,7 +119,6 @@ function M.Diff:toggle_diff()
     else
         self:create_buffer()
         self:update_diff()
-        self.session.info:update_info_buffer()
     end
 end
 
