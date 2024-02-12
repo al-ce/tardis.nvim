@@ -32,9 +32,8 @@ function M.Diff:show(win, enable)
 end
 
 function M.Diff:create_buffer()
-    local initial_diff_base = self.session.parent.cmd_opts.diff_base
-        or self.session.parent.config.settings.diff_base
-    if not initial_diff_base or self.session.parent.cmd_opts.diff_base == false then
+    local initial_diff_base = self.session.parent.config.settings.diff_base
+    if not initial_diff_base then
         return
     end
 

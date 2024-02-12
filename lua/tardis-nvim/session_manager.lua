@@ -5,7 +5,6 @@ local M = {}
 ---@field sessions TardisSession[]
 ---@field config TardisConfig
 ---@field next integer
----@field cmd_opts table
 M.SessionManager = {}
 
 ---@param config TardisConfig
@@ -27,7 +26,7 @@ end
 
 ---@param opts table
 function M.SessionManager:create_session(opts)
-    self.cmd_opts = opts or {}
+    self.config = vim.tbl_deep_extend('force', self.config, opts)
     ses.Session:new(self.next, self)
     self.next = self.next + 1
 end
