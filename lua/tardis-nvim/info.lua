@@ -30,6 +30,9 @@ end
 
 ---@param revision string
 function M.Info:create_info_buffer(revision)
+    local cur_win = vim.api.nvim_get_current_win()
+    vim.api.nvim_set_current_win(self.session.origin_win)
+
     local message = self.session.adapter.get_revision_info(revision, self.session)
     if not message or #message == 0 then
         vim.notify('revision_message was empty')
@@ -53,8 +56,10 @@ function M.Info:create_info_buffer(revision)
         vim.api.nvim_set_current_win(self.session.origin_win)
         vim.api.nvim_set_option_value('splitbelow', split_opt, { scope = 'global' })
     else
-        local row = opts.position:match('N') and 0 or vim.api.nvim_win_get_height(0)
-        local col = opts.position:match('W') and 0 or vim.api.nvim_win_get_width(0)
+        local origin_height = vim.api.nvim_win_get_height(self.session.origin_win)
+        local origin_width = vim.api.nvim_win_get_width(self.session.origin_win)
+        local row = opts.position:match('N') and 0 or origin_height
+        local col = opts.position:match('W') and 0 or origin_width
         vim.api.nvim_open_win(fd, false, {
             relative = 'win',
             anchor = opts.position,
@@ -66,6 +71,7 @@ function M.Info:create_info_buffer(revision)
         })
     end
     vim.api.nvim_buf_set_name(fd, 'TARDIS Info')
+    vim.api.nvim_set_current_win(cur_win)
 end
 
 function M.Info:update_info_buffer()

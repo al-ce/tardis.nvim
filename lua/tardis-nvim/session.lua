@@ -114,8 +114,9 @@ function M.Session:set_keymaps(bufnr)
 end
 
 function M.Session:close()
+    vim.api.nvim_set_current_win(self.origin_win)
     vim.cmd('e ' .. self.path)
-    vim.api.nvim_win_set_cursor(0, self.origin_pos)
+    vim.api.nvim_win_set_cursor(self.origin_win, self.origin_pos)
     for _, buf in ipairs(self.buffers) do
         buf:close()
     end

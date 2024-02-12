@@ -53,6 +53,8 @@ function M.Diff:create_buffer()
     vim.cmd('diffthis')
 
     vim.api.nvim_set_option_value('splitright', split_opt, {})
+
+    self.session:set_keymaps(self.diff_buf)
 end
 
 ---@param revision string
