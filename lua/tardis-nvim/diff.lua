@@ -40,11 +40,12 @@ function M.Diff:create_buffer()
     if initial_diff_base == '' then
         initial_diff_base = self.session.buffers[2].revision
         self.diff_base = ''
+        self.locked = false
     else
         initial_diff_base = self.session.adapter.get_rev_parse(initial_diff_base)
         self.diff_base = initial_diff_base
+        self.locked = true
     end
-    self.locked = false
 
     local split_opt = vim.api.nvim_get_option_value('splitright', {})
     vim.api.nvim_set_option_value('splitright', false, {})
@@ -69,7 +70,8 @@ end
 ---@param revision string
 function M.Diff:set_diff_lines(revision)
     local lines = self.session.adapter.get_file_at_revision(revision, self.session)
-    local diff_name = vim.fn.expand(self.session.path) .. ' @ ' .. revision .. ' - TARDIS diff base'
+    local locked = self.locked and ' [locked]' or ''
+    local diff_name = self.session.path .. ' @ ' .. revision .. ' - TARDIS diff base' .. locked
     vim.api.nvim_buf_set_name(self.diff_buf, diff_name)
     vim.api.nvim_set_option_value('modifiable', true, { buf = self.diff_buf })
     vim.api.nvim_buf_set_lines(self.diff_buf, 0, -1, false, lines)
@@ -97,7 +99,7 @@ end
 
 ---@param index integer?
 function M.Diff:update_diff(index)
-    if not self:has_diff_buf() or self.diff_base ~= '' then
+    if not self:has_diff_buf() or self.locked then
         return
     end
     index = index or self.session.current_buffer_index + 1
@@ -108,14 +110,14 @@ end
 
 function M.Diff:lock_diff_base()
     local diff_name = vim.api.nvim_buf_get_name(self.diff_buf)
-    if self.diff_base == '' then
+    if self.locked then
+        self.diff_base = ''
+        self.locked = false
+    else
         diff_name = diff_name .. ' [locked]'
         local prev = math.min(self.session.current_buffer_index + 1, #self.session.buffers)
         self.diff_base = self.session.buffers[prev].revision
         self.locked = true
-    else
-        self.diff_base = ''
-        self.locked = false
     end
     vim.api.nvim_buf_set_name(self.diff_buf, diff_name)
     self:update_diff()
