@@ -87,6 +87,7 @@ function M.Diff:toggle_diff()
     end
 end
 
+---@param index integer?
 function M.Diff:update_diff(index)
     if not self:has_diff_buf() or self.diff_base ~= '' then
         return

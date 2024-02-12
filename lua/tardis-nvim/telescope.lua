@@ -67,7 +67,8 @@ M.git_commits = function(session, opts)
                 local selection = actions_state.get_selected_entry()
                 actions.close(prompt_bufnr)
                 session.diff:update_diff(selection.index)
-                session.diff.diff_base = selection.value
+                session.diff.diff_base = ''
+                session.diff:lock_diff_base()
             end, { desc = 'Tardis: set diff' })
         end
         return true
