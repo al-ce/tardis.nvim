@@ -20,6 +20,17 @@ function M.Diff:has_diff_buf()
     return self.diff_buf and vim.api.nvim_buf_is_valid(self.diff_buf)
 end
 
+---@param win integer
+---@param enable boolean
+function M.Diff:show(win, enable)
+    if not vim.api.nvim_win_is_valid(win) then
+        return
+    end
+    vim.api.nvim_set_current_win(win)
+    local cmd = enable and 'diffthis' or 'diffoff'
+    vim.cmd(cmd)
+end
+
 function M.Diff:create_buffer()
     local initial_diff_base = self.session.parent.cmd_opts.diff_base
         or self.session.parent.config.settings.diff_base
@@ -47,10 +58,9 @@ function M.Diff:create_buffer()
     self:set_diff_lines(initial_diff_base)
     vim.api.nvim_set_option_value('filetype', self.session.filetype, { buf = self.diff_buf })
     vim.api.nvim_set_option_value('readonly', true, { buf = self.diff_buf })
-    vim.cmd('diffthis')
 
-    vim.api.nvim_set_current_win(self.session.origin_win)
-    vim.cmd('diffthis')
+    self:show(self.diff_win, true)
+    self:show(self.session.origin_win, true)
 
     vim.api.nvim_set_option_value('splitright', split_opt, {})
 
@@ -67,12 +77,9 @@ end
 
 function M.Diff:close()
     if self:has_diff_buf() then
-        vim.api.nvim_set_current_win(self.diff_win)
-        vim.cmd('diffoff')
+        self:show(self.diff_win, false)
         vim.api.nvim_buf_delete(self.diff_buf, { force = true })
         vim.api.nvim_set_current_win(self.session.origin_win)
-    else
-        vim.cmd('diffoff')
     end
 end
 

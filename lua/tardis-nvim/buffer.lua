@@ -21,23 +21,9 @@ function M.Buffer:new(session, revision, fd)
     return setmetatable(buffer, self)
 end
 
-function M.Buffer:focus_pre()
-    if self.session.diff:has_diff_buf() then
-        vim.cmd('diffoff')
-    end
-end
-
-function M.Buffer:focus_post()
-    if self.session.diff:has_diff_buf() then
-        vim.cmd('diffthis')
-    end
-    self.session.info:update_info_buffer()
-end
-
 function M.Buffer:focus()
     local cur_win = vim.api.nvim_get_current_win()
-    vim.api.nvim_set_current_win(self.session.origin_win)
-    self:focus_pre()
+    self.session.diff:show(self.session.origin_win, false)
     local current_pos = vim.api.nvim_win_get_cursor(self.session.origin_win)
     local target_line_count = vim.api.nvim_buf_line_count(self.fd)
     if current_pos[1] >= target_line_count then
@@ -45,7 +31,8 @@ function M.Buffer:focus()
     end
     vim.api.nvim_win_set_buf(self.session.origin_win, self.fd)
     vim.api.nvim_win_set_cursor(self.session.origin_win, current_pos)
-    self:focus_post()
+    self.session.diff:show(self.session.origin_win, true)
+    self.session.info:update_info_buffer()
     vim.api.nvim_set_current_win(cur_win)
 end
 
