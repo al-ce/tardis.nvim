@@ -141,7 +141,7 @@ function M.Session:goto_buffer(index)
     if not buf.fd then
         buf.fd = self:create_buffer(buf.revision)
     end
-    buf:focus()
+    buf:set_lines()
     self.current_buffer_index = index
     self.info:update_info_buffer()
 end
