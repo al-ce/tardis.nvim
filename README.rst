@@ -32,7 +32,7 @@ The default options are
             ["revision_message"] = '<C-m>', -- show revision message for current revision
             ["move_message"] = '<C-a>',     -- move the revision info window to SE or NE
             ['lock_diff_base'] = '<C-l>',   -- lock/unlock the diff base to current
-            ['toggle_diff'] = '<M-d>',      -- toggle diff view
+            ['toggle_diff'] = '<C-i>',      -- toggle diff view
             ['toggle_split'] = '<C-s>',     -- toggle the diff split
             ['telescope'] = '<C-t>',        -- open telescope picker to go to revision
         },
