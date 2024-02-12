@@ -26,39 +26,38 @@ The default options are
 
     require('tardis-nvim').setup {
         keymap = {
-            ["next"] = '<C-j>',         -- next entry in log (older)
-            ["prev"] = '<C-k>',         -- previous entry in log (newer)
-            ["quit"] = 'q',             -- quit all
+            ["next"] = '<C-j>',             -- next entry in log (older)
+            ["prev"] = '<C-k>',             -- previous entry in log (newer)
+            ["quit"] = 'q',                 -- quit all
             ["revision_message"] = '<C-m>', -- show revision message for current revision
-            ["move_message"] = '<C-a>', -- move the revision info window to SE or NE
-            ['lock_diff_base'] = '<C-l>', -- lock/unlock the diff base to current
-            ['toggle_diffsplit'] = '<M-d>', -- toggle the diff split view
-            ['telescope'] = '<C-t>',    -- open telescope picker to go to revision
+            ["move_message"] = '<C-a>',     -- move the revision info window to SE or NE
+            ['lock_diff_base'] = '<C-l>',   -- lock/unlock the diff base to current
+            ['toggle_diff'] = '<M-d>',      -- toggle the diff split view
+            ['telescope'] = '<C-t>',        -- open telescope picker to go to revision
         },
-        initial_revisions = 10,         -- initial revisions to create buffers for
-        max_revisions = 256,            -- max number of revisions to load
+        initial_revisions = 10,             -- initial revisions to create buffers for
+        max_revisions = 256,                -- max number of revisions to load
 
-        -- Set to "" to show diff against previously viewed revision
-        -- Set to e.g. "HEAD" to always diff against that revision
-        -- Set to nil to not diff at all
-        diff_base = "",
+        diff_split = false,                 -- open diff in a split window
+        diff_base = "",                     -- diff base revision to use when diffing
+                                            -- (empty string means the parent of the current revision)
 
         info = {
-            on_launch = true,           -- show info on Tardis launch
-            split = false,              -- open info in a split instead of float
-            height = 10,                -- height of the info window
-            width = 82,                 -- width of the info window (float only)
-            border = 'single',          -- border of the info window
+            on_launch = true,               -- show info on Tardis launch
+            split = false,                  -- open info in a split instead of float
+            height = 10,                    -- height of the info window
+            width = 82,                     -- width of the info window (float only)
+            border = 'single',              -- border of the info window
 
             -- Float options
-            position = 'SE',            -- position of info relative to window
-            x_off = 0,                  -- offset of row
-            y_off = -1,                  -- offset or column
+            position = 'SE',                -- position of info relative to window
+            x_off = 0,                      -- offset of row
+            y_off = -1,                     -- offset or column
         },
 
         -- any opts valid for telescope.builtin.git_bcommits
         telescope = {
-            delta = true,               -- use delta as the preview pager
+            delta = true,                   -- use delta as the preview pager
         }
     }
 

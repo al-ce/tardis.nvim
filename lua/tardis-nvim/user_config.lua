@@ -6,6 +6,7 @@ local M = {}
 ---@field max_revisions integer
 ---@field initial_revisions integer
 ---@field diff_base string
+---@field diff_split boolean
 ---@field info table
 ---@field telescope table
 
@@ -27,12 +28,13 @@ local function get_default_config()
             ['revision_message'] = '<C-m>',
             ['move_message'] = '<C-a>',
             ['lock_diff_base'] = '<C-l>',
-            ['toggle_diffsplit'] = '<M-d>',
+            ['toggle_diff'] = '<M-d>',
             ['telescope'] = '<C-t>',
         },
         settings = {
             max_revisions = 256,
             initial_revisions = 10,
+            diff_split = false,
             diff_base = '',
             info = {
                 on_launch = true,

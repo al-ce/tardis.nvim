@@ -106,7 +106,7 @@ function M.Session:set_keymaps(bufnr)
         [keymap.move_message] = function() self.info:move_info_buffer() end,
         [keymap.telescope] = function() tardis_telescope.git_commits(self, telescope_opts) end,
         [keymap.lock_diff_base] = function() self.diff:lock_diff_base() end,
-        [keymap.toggle_diffsplit] = function() self.diff:toggle_diff() end,
+        [keymap.toggle_diff] = function() self.diff:toggle_diff() end,
     }
     for k, v in pairs(kv) do
         vim.keymap.set('n', k, v, { buffer = bufnr })
