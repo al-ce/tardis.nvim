@@ -126,6 +126,7 @@ function M.Diff:toggle_split()
     self.diff_split = not self.diff_split
     self:close()
     self:create_buffer()
+    self:update_diff()
 end
 
 ---@param index integer?
