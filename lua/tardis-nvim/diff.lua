@@ -125,9 +125,7 @@ end
 
 function M.Diff:toggle_split()
     self.diff_split = not self.diff_split
-    self:close()
-    self:create_buffer()
-    self:update_diff()
+    self:refresh()
     self.session.keyhints:refresh()
 end
 
@@ -141,6 +139,14 @@ function M.Diff:update_diff(index)
     local revision = self.session.buffers[index].revision
     self:set_diff_lines(revision)
     vim.cmd('set foldlevel=0')
+end
+
+function M.Diff:refresh()
+    if self:has_diff_buf() then
+        self:close()
+        self:create_buffer()
+        self:update_diff()
+    end
 end
 
 function M.Diff:lock_diff_base()

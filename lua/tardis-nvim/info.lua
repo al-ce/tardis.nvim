@@ -145,4 +145,12 @@ function M.Info:close()
     end
 end
 
+function M.Info:refresh()
+    if not self:has_info_buf() then
+        return
+    end
+    self:close()
+    self:toggle_info_buffer()
+end
+
 return M
