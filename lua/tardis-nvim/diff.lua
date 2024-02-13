@@ -140,6 +140,7 @@ function M.Diff:update_diff(index)
     index = math.min(index, #self.session.buffers)
     local revision = self.session.buffers[index].revision
     self:set_diff_lines(revision)
+    vim.cmd('set foldlevel=0')
 end
 
 function M.Diff:lock_diff_base()
