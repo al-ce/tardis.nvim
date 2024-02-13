@@ -1,7 +1,5 @@
 local M = {}
 
----@alias TardisKeymap {[string]: string}
-
 ---@class TardisSettings
 ---@field max_revisions integer
 ---@field initial_revisions integer
@@ -9,6 +7,18 @@ local M = {}
 ---@field diff_split boolean
 ---@field info table
 ---@field telescope table
+
+---@class TardisKeymap
+---@field next string
+---@field prev string
+---@field quit string
+---@field revision_message string
+---@field move_message string
+---@field lock_diff_base string
+---@field toggle_diff string
+---@field toggle_split string
+---@field telescope string
+---@field keyhints string
 
 ---@class TardisConfig
 ---@field keymap TardisKeymap
@@ -22,15 +32,16 @@ local M = {}
 local function get_default_config()
     return {
         keymap = {
-            ['next'] = '<C-j>',
-            ['prev'] = '<C-k>',
-            ['quit'] = 'q',
-            ['revision_message'] = '<C-m>',
-            ['move_message'] = '<C-a>',
-            ['lock_diff_base'] = '<C-l>',
-            ['toggle_diff'] = '<C-i>',
-            ['toggle_split'] = '<C-s>',
-            ['telescope'] = '<C-t>',
+            next = '<C-j>',
+            prev = '<C-k>',
+            quit = 'q',
+            revision_message = '<C-m>',
+            move_message = '<C-a>',
+            lock_diff_base = '<C-l>',
+            toggle_diff = '<C-i>',
+            toggle_split = '<C-s>',
+            telescope = '<C-t>',
+            keyhints = '<C-/>',
         },
         settings = {
             max_revisions = 256,

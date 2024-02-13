@@ -35,6 +35,7 @@ The default options are
             ['toggle_diff'] = '<C-i>',      -- toggle diff view
             ['toggle_split'] = '<C-s>',     -- toggle the diff split
             ['telescope'] = '<C-t>',        -- open telescope picker to go to revision
+            ['keyhints'] = '<C-/>',         -- open floating window with keymap hints
         },
         initial_revisions = 10,             -- initial revisions to create buffers for
         max_revisions = 256,                -- max number of revisions to load

@@ -3,6 +3,7 @@ local buffer = require('tardis-nvim.buffer')
 local diff = require('tardis-nvim.diff')
 local info = require('tardis-nvim.info')
 local tardis_telescope = require('tardis-nvim.telescope')
+local keyhints = require('tardis-nvim.keyhints')
 
 local M = {}
 
@@ -19,6 +20,7 @@ local M = {}
 ---@field buffers TardisBuffer[]
 ---@field adapter TardisAdapter
 ---@field info TardisInfo
+---@field keyhints TardisKeyHints
 M.Session = {}
 
 ---@param id integer
@@ -68,12 +70,14 @@ function M.Session:init(id, parent, adapter_type)
 
     self.info = info.Info:new(self)
     self.diff = diff.Diff:new(self)
+    self.keyhints = keyhints.KeyHints:new(self)
 
     self:goto_buffer(1)
     if self.parent.config.settings.info.on_launch then
         self.info:create_info_buffer(log[1])
     end
     self.diff:create_buffer()
+
 
     parent:on_session_opened(self)
 end
@@ -108,6 +112,7 @@ function M.Session:set_keymaps(bufnr)
         [keymap.toggle_diff] = function() self.diff:toggle_diff() end,
         [keymap.toggle_split] = function() self.diff:toggle_split() end,
         [keymap.telescope] = function() tardis_telescope.git_commits(self, telescope_opts) end,
+        [keymap.keyhints] = function() self.keyhints:toggle() end,
     }
     for k, v in pairs(kv) do
         vim.keymap.set('n', k, v, { buffer = bufnr })
@@ -126,6 +131,7 @@ function M.Session:close()
     end
     self.info:close()
     self.diff:close()
+    self.keyhints:close()
 end
 
 ---@return TardisBuffer

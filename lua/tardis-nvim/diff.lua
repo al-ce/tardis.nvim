@@ -119,6 +119,7 @@ function M.Diff:toggle_diff()
     else
         self:create_buffer()
         self:update_diff()
+        self.session.keyhints:refresh()
     end
 end
 
@@ -127,6 +128,7 @@ function M.Diff:toggle_split()
     self:close()
     self:create_buffer()
     self:update_diff()
+    self.session.keyhints:refresh()
 end
 
 ---@param index integer?
