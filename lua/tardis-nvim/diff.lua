@@ -96,8 +96,7 @@ end
 ---@param revision string
 function M.Diff:set_diff_lines(revision)
     local lines = self.session.adapter.get_file_at_revision(revision, self.session)
-    local locked = self.locked and ' [locked]' or ''
-    local diff_name = self.session.path .. ' @ ' .. revision .. ' - TARDIS diff base' .. locked
+    local diff_name = self:get_buf_name(revision)
     vim.api.nvim_buf_set_name(self.diff_buf, diff_name)
     vim.api.nvim_set_option_value('modifiable', true, { buf = self.diff_buf })
     vim.api.nvim_buf_set_lines(self.diff_buf, 0, -1, false, lines)
@@ -162,6 +161,13 @@ function M.Diff:lock_diff_base()
     end
     vim.api.nvim_buf_set_name(self.diff_buf, diff_name)
     self:update_diff()
+end
+
+---@param revision string
+function M.Diff:get_buf_name(revision)
+    local name = self.session.path .. ' @ ' .. revision .. ' - TARDIS diff base'
+    local locked = self.locked and ' [locked]' or ''
+    return name .. locked
 end
 
 return M

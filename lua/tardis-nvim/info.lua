@@ -1,5 +1,7 @@
 local M = {}
 
+M.info_buf_name = 'TARDIS Info'
+
 ---@class TardisInfo
 ---@field infobuf integer
 ---@field infowin integer
@@ -100,7 +102,7 @@ function M.Info:create_info_buffer(revision)
     else
         self:create_float_win(opts)
     end
-    vim.api.nvim_buf_set_name(fd, 'TARDIS Info')
+    vim.api.nvim_buf_set_name(fd, M.info_buf_name)
     vim.api.nvim_set_current_win(cur_win)
 end
 

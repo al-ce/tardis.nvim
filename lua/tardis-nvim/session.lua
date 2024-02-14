@@ -86,7 +86,7 @@ end
 function M.Session:create_buffer(revision)
     local fd = vim.api.nvim_create_buf(false, true)
     local file_at_revision = self.adapter.get_file_at_revision(revision, self)
-    local filename = self.path .. ' @ ' .. revision .. ' - TARDIS'
+    local filename = self:get_buf_name(revision)
 
     vim.api.nvim_buf_set_name(fd, filename)
     vim.api.nvim_buf_set_lines(fd, 0, -1, false, file_at_revision)
@@ -161,6 +161,11 @@ end
 function M.Session:prev_buffer()
     self:goto_buffer(self.current_buffer_index - 1)
     self.diff:update_diff()
+end
+
+function M.Session:get_buf_name(revision)
+    local name = self.path .. ' @ ' .. revision .. ' - TARDIS'
+    return name
 end
 
 return M
