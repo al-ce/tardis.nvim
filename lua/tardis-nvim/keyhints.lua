@@ -37,6 +37,7 @@ function M.KeyHints:create_window(width, height)
         title_pos = 'center',
     })
     vim.api.nvim_set_current_win(cur_win)
+    vim.api.nvim_set_option_value('foldenable', false, { win = win })
     return win
 end
 
