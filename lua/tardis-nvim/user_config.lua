@@ -50,7 +50,7 @@ local function get_default_config()
             diff_base = '',
             info = {
                 on_launch = true,
-                split = false,
+                split = true,
                 height = 6,
                 width = 82,
                 position = 'SE',
