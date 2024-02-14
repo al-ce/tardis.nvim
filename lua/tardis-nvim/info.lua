@@ -102,6 +102,7 @@ function M.Info:create_info_buffer(revision)
     else
         self:create_float_win(opts)
     end
+    vim.api.nvim_set_option_value('foldenable', false, { win = self.infowin })
     vim.api.nvim_buf_set_name(fd, M.info_buf_name)
     vim.api.nvim_set_current_win(cur_win)
 end
