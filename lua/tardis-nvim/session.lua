@@ -77,7 +77,9 @@ function M.Session:init(id, parent, adapter_type)
         self.info:create_info_buffer(log[1])
     end
     self.diff:create_buffer()
-
+    if self.parent.config.settings.keyhints.on_launch then
+        self.keyhints:show()
+    end
 
     parent:on_session_opened(self)
 end

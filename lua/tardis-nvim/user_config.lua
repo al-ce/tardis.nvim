@@ -7,6 +7,7 @@ local M = {}
 ---@field diff_split boolean
 ---@field info table
 ---@field telescope table
+---@field keyhints table
 
 ---@class TardisKeymap
 ---@field next string
@@ -59,6 +60,9 @@ local function get_default_config()
             },
             telescope = {
                 delta = true,
+            },
+            keyhints = {
+                on_launch = true,
             },
         },
         debug = false,

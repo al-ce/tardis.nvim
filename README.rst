@@ -61,6 +61,10 @@ The default options are
         telescope = {
             delta = true,                   -- use delta as the preview pager
         }
+
+        keyhints = {
+            on_launch = true,               -- show keymap hints on Tardis launch
+        }
     }
 
 Usage
